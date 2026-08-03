@@ -45,7 +45,7 @@ const ProductCard: React.FC<{ product: any }> = ({ product }) => {
       </div>
       <p className="text-xs text-gray-400 uppercase tracking-wide">{product.product_type}</p>
       <h3 className="font-medium text-gray-900 text-sm truncate">{product.name}</h3>
-      <p className="text-xs text-gray-500 mt-1 leading-5" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{description}</p>
+      <p className="text-[13px] sm:text-xs text-gray-500 mt-1 leading-5 sm:leading-4" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{description}</p>
       <div className="flex items-center gap-1 mt-1">
         <Star size={12} className="fill-yellow-400 text-yellow-400" />
         <span className="text-xs text-gray-500">{rating.toFixed(1)}</span>

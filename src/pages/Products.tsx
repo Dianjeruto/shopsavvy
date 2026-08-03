@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { demoProducts } from '@/lib/demo-catalog';
 import Header from '@/components/Header';
@@ -56,8 +56,15 @@ const Products: React.FC = () => {
     <div className="min-h-screen bg-white">
       <Header />
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-1">{q ? `Results for "${q}"` : 'All Products'}</h1>
-        <p className="text-gray-500 mb-6">{filtered.length} products</p>
+        <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+          <div>
+            <h1 className="text-3xl font-bold mb-1">{q ? `Results for "${q}"` : 'All Products'}</h1>
+            <p className="text-gray-500">{filtered.length} products</p>
+          </div>
+          <Link to="/" className="inline-flex items-center rounded-lg bg-[#FF6B6B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#ff5252]">
+            ← Back Home
+          </Link>
+        </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters */}

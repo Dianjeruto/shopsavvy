@@ -13,16 +13,22 @@ This project was developed as a polished storefront demo for digital commerce, w
 - a demo-ready catalog with collection-driven browsing
 - resilient fallback behavior for local testing and walkthroughs
 - Kenya-focused checkout messaging and KES pricing
+- flexible payment choices with pay-on-delivery or pay-before-delivery
+- stronger checkout validation for customer contact details and location
+- animated homepage offer marquee for continuous promotions
+- market-aware pricing range between KSh 750 and KSh 5,600
 
 ## Features
 
 ### Storefront experience
 - responsive landing page with featured products and collections
+- animated homepage promo strip that continuously scrolls
 - products and collection browsing
 - product detail view with variants and pricing
 - cart management and quantity updates
 - wishlist functionality
-- checkout with shipping and contact details
+- checkout with shipping, contact details, location, and payment method selection
+- pay-on-delivery or pay-before-delivery options
 - order confirmation experience
 
 ### Demo resilience
@@ -87,8 +93,9 @@ supabase/
 - `src/lib/auth-demo.ts` handles local demo sign-up, sign-in, and session persistence
 - `src/lib/demo-catalog.ts` contains the fallback product and collection dataset
 - `src/lib/supabase.ts` defines the shared Supabase client connection
-- `src/pages/Checkout.tsx` manages the checkout flow and local payment fallback behavior
-- `src/pages/Home.tsx` powers the homepage experience and product highlights
+- `src/pages/Checkout.tsx` manages the checkout flow, shipping inputs, payment method selection, and fallback order behavior
+- `src/pages/Home.tsx` powers the homepage experience, product highlights, and the animated offer marquee
+- `src/pages/Products.tsx` contains the all-products view with the home return button and the updated price-range filter
 - `src/pages/InfoPage.tsx` contains the About and company profile copy
 
 ## How to run the project
@@ -143,6 +150,8 @@ The Express server exposes common shopping endpoints such as:
 ## Demo fallback behavior
 
 This application is designed to remain usable in demo mode when live backend resources are unavailable. When remote Supabase queries fail, the app falls back to a local demo catalog and collections dataset. This allows product browsing, cart updates, wishlist actions, and checkout walkthroughs to continue without a hard failure.
+
+The storefront also adds a market-aware pricing layer and a product price range tuned for the local shopping context, with a visible minimum of KSh 750 and a maximum of KSh 5,600 during browsing and filtering.
 
 ## External services
 

@@ -13,7 +13,8 @@ const Products: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [type, setType] = useState('All');
   const [sort, setSort] = useState('featured');
-  const [maxPrice, setMaxPrice] = useState(250);
+  const [minPrice, setMinPrice] = useState(750);
+  const [maxPrice, setMaxPrice] = useState(5600);
 
   useEffect(() => {
     const load = async () => {
@@ -41,7 +42,7 @@ const Products: React.FC = () => {
     let list = products.filter(p => {
       const price = (p.has_variants && p.variants?.length ? p.variants[0].price : p.price) / 100;
       if (type !== 'All' && p.product_type !== type) return false;
-      if (price > maxPrice) return false;
+      if (price < minPrice || price > maxPrice) return false;
       if (q && !p.name.toLowerCase().includes(q.toLowerCase()) && !(p.product_type || '').toLowerCase().includes(q.toLowerCase())) return false;
       return true;
     });
@@ -50,7 +51,7 @@ const Products: React.FC = () => {
     if (sort === 'price-desc') list = [...list].sort((a, b) => getP(b) - getP(a));
     if (sort === 'name') list = [...list].sort((a, b) => a.name.localeCompare(b.name));
     return list;
-  }, [products, type, sort, maxPrice, q]);
+  }, [products, type, sort, minPrice, maxPrice, q]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -80,10 +81,27 @@ const Products: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div>
-              <h3 className="font-semibold mb-3">Max Price: KSh {maxPrice}</h3>
-              <input type="range" min={10} max={250} value={maxPrice} onChange={e => setMaxPrice(Number(e.target.value))}
-                className="w-full accent-[#FF6B6B]" />
+            <div className="space-y-3">
+              <div>
+                <h3 className="font-semibold mb-2">Price Range</h3>
+                <p className="text-sm text-gray-600">KSh {minPrice} - KSh {maxPrice}</p>
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm text-gray-700">
+                  <span className="mb-1 block">Min Price</span>
+                  <input type="range" min={750} max={5600} value={minPrice} onChange={e => {
+                    const nextMin = Number(e.target.value);
+                    setMinPrice(nextMin > maxPrice ? maxPrice : nextMin);
+                  }} className="w-full accent-[#FF6B6B]" />
+                </label>
+                <label className="block text-sm text-gray-700">
+                  <span className="mb-1 block">Max Price</span>
+                  <input type="range" min={750} max={5600} value={maxPrice} onChange={e => {
+                    const nextMax = Number(e.target.value);
+                    setMaxPrice(nextMax < minPrice ? minPrice : nextMax);
+                  }} className="w-full accent-[#FF6B6B]" />
+                </label>
+              </div>
             </div>
           </aside>
 

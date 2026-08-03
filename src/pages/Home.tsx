@@ -49,6 +49,17 @@ const Home: React.FC = () => {
     <div className="min-h-screen bg-white">
       <Header />
 
+      <section className="bg-[#2C2C2C] text-white overflow-hidden border-b border-white/10">
+        <div className="offer-marquee flex min-w-max items-center gap-10 py-3 text-sm font-semibold tracking-wide uppercase">
+          <span>Flash Offer • Save up to 30% on selected picks</span>
+          <span>Free delivery on orders above KSh 3,000</span>
+          <span>New season arrivals now live</span>
+          <span>Flash Offer • Save up to 30% on selected picks</span>
+          <span>Free delivery on orders above KSh 3,000</span>
+          <span>New season arrivals now live</span>
+        </div>
+      </section>
+
       {/* Hero */}
       <section className="relative h-[60vh] min-h-[420px] md:min-h-[500px] flex items-center overflow-hidden">
         <img src={HERO} alt="Shop" className="absolute inset-0 w-full h-full object-cover animate-hero-pan" />

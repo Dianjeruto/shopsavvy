@@ -132,6 +132,20 @@
   }
 }
 
+@keyframes offer-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.offer-marquee {
+  width: max-content;
+  animation: offer-marquee 18s linear infinite;
+}
+
 .animate-hero-pan {
   animation: hero-pan 14s ease-in-out infinite alternate;
   will-change: transform;
@@ -148,6 +162,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .offer-marquee,
   .animate-hero-pan,
   .home-hero-card,
   .home-perk-card,

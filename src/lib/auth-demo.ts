@@ -10,19 +10,38 @@ export interface DemoSession {
   };
 }
 
+export const ADMIN_DEMO_EMAIL = 'dian@2030';
+export const ADMIN_DEMO_PASSWORD = 'dian321';
+
 const USERS_KEY = 'luma_demo_users';
 const SESSION_KEY = 'luma_demo_session';
 
 const normalizeEmail = (email: string) => email.trim().toLowerCase();
+
+const seedAdminUser = (users: DemoUser[]) => {
+  if (!users.some((user) => user.email === ADMIN_DEMO_EMAIL)) {
+    users.push({
+      email: ADMIN_DEMO_EMAIL,
+      password: ADMIN_DEMO_PASSWORD,
+      createdAt: new Date().toISOString(),
+    });
+  }
+};
 
 const readUsers = (): DemoUser[] => {
   if (typeof window === 'undefined') return [];
 
   try {
     const raw = window.localStorage.getItem(USERS_KEY);
-    return raw ? (JSON.parse(raw) as DemoUser[]) : [];
+    const users = raw ? (JSON.parse(raw) as DemoUser[]) : [];
+    seedAdminUser(users);
+    writeUsers(users);
+    return users;
   } catch {
-    return [];
+    const seeded: DemoUser[] = [];
+    seedAdminUser(seeded);
+    writeUsers(seeded);
+    return seeded;
   }
 };
 
@@ -92,6 +111,23 @@ export const signInDemo = async (email: string, password: string) => {
   const normalizedEmail = normalizeEmail(email);
   const users = readUsers();
   const foundUser = users.find((user) => user.email === normalizedEmail && user.password === password);
+
+  if (normalizedEmail === ADMIN_DEMO_EMAIL && password === ADMIN_DEMO_PASSWORD) {
+    const session: DemoSession = {
+      user: {
+        email: ADMIN_DEMO_EMAIL,
+      },
+    };
+
+    writeSession(session);
+    return {
+      data: {
+        session,
+        user: session.user,
+      },
+      error: null,
+    };
+  }
 
   if (!foundUser) {
     throw new Error('Invalid email or password.');

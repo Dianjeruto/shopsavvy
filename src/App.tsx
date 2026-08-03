@@ -14,6 +14,7 @@ import Wishlist from "./pages/Wishlist";
 import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import Auth from "./pages/Auth";
+import AdminDashboard from "./pages/AdminDashboard";
 import InfoPage from "./pages/InfoPage";
 import NotFound from "./pages/NotFound";
 
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-confirmation" element={<OrderConfirmation />} />
               <Route path="/signin" element={<Auth />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/info/:slug" element={<InfoPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -71,7 +71,7 @@ const Header: React.FC = () => {
           <button className="lg:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <Link to="/" className="text-2xl font-extrabold tracking-tight text-[#2C2C2C]">
+          <Link to="/admin" className="text-2xl font-extrabold tracking-tight text-[#2C2C2C]">
             ShopSavvy<span className="text-[#FF6B6B]">.</span>
           </Link>
           <nav className="hidden lg:flex items-center gap-6 flex-1 justify-center">

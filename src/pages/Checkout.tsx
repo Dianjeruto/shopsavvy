@@ -43,6 +43,7 @@ const Checkout: React.FC = () => {
   const { cart, cartSubtotal, clearCart } = useCart();
   const navigate = useNavigate();
   const [clientSecret, setClientSecret] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'prepay'>('cod');
   const [paymentError, setPaymentError] = useState('');
   const [shipping] = useState(0);
   const [tax, setTax] = useState(0);
@@ -72,6 +73,11 @@ const Checkout: React.FC = () => {
       return;
     }
 
+    if (paymentMethod === 'cod') {
+      await handleSuccess({ id: `cod-order-${Date.now()}`, status: 'pending' });
+      return;
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke('create-payment-intent', { body: { amount: total, currency: 'kes', country: 'Kenya' } });
       if (error || !data?.clientSecret) {
@@ -88,8 +94,9 @@ const Checkout: React.FC = () => {
   const handleSuccess = async (pi: any) => {
     const { data: customer } = await supabase.from('ecom_customers')
       .upsert({ email: addr.email, name: addr.name }, { onConflict: 'email' }).select('id').single();
+    const orderStatus = paymentMethod === 'cod' ? 'pending' : (pi.status === 'succeeded' ? 'paid' : 'pending');
     const { data: order } = await supabase.from('ecom_orders').insert({
-      customer_id: customer?.id, status: 'paid', subtotal: cartSubtotal, tax, shipping,
+      customer_id: customer?.id, status: orderStatus, subtotal: cartSubtotal, tax, shipping,
       total, shipping_address: addr, stripe_payment_intent_id: pi.id
     }).select('id').single();
     if (order) {
@@ -151,17 +158,45 @@ const Checkout: React.FC = () => {
           </div>
 
           <h2 className="font-semibold mb-3">Payment</h2>
-          {!clientSecret ? (
+          <div className="grid gap-3 mb-4">
+            <label className="flex items-center gap-3 border border-gray-200 rounded-lg p-3 cursor-pointer">
+              <input type="radio" name="paymentMethod" checked={paymentMethod === 'cod'} onChange={() => {
+                setPaymentMethod('cod');
+                setClientSecret('');
+              }} />
+              <span>
+                <span className="block font-medium">Pay on delivery</span>
+                <span className="text-sm text-gray-500">Pay the total amount when your order arrives.</span>
+              </span>
+            </label>
+            <label className="flex items-center gap-3 border border-gray-200 rounded-lg p-3 cursor-pointer">
+              <input type="radio" name="paymentMethod" checked={paymentMethod === 'prepay'} onChange={() => {
+                setPaymentMethod('prepay');
+                setClientSecret('');
+              }} />
+              <span>
+                <span className="block font-medium">Pay before delivery</span>
+                <span className="text-sm text-gray-500">Complete the secure payment now before shipping begins.</span>
+              </span>
+            </label>
+          </div>
+
+          {!clientSecret && paymentMethod === 'prepay' ? (
             <>
               <button onClick={initPayment} disabled={!formOk}
                 className="w-full bg-[#2C2C2C] text-white py-3.5 rounded-lg font-semibold hover:bg-black disabled:opacity-50">
                 {formOk ? 'Continue to Payment' : 'Fill in shipping details'}
               </button>
             </>
-          ) : (
+          ) : paymentMethod === 'prepay' ? (
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <PaymentForm onSuccess={handleSuccess} />
             </Elements>
+          ) : (
+            <button onClick={initPayment} disabled={!formOk}
+              className="w-full bg-[#FF6B6B] text-white py-3.5 rounded-lg font-semibold hover:bg-[#ff5252] disabled:opacity-50">
+              {formOk ? 'Place Order (Pay on Delivery)' : 'Fill in shipping details'}
+            </button>
           )}
         </div>
 

@@ -31,6 +31,10 @@ const ProductDetail: React.FC = () => {
         const source = error || !data ? fallback : data;
         if (!source) return;
 
+        if (!source.description && fallback?.description) {
+          source.description = fallback.description;
+        }
+
         let variants = source.variants || [];
         if (source.has_variants && variants.length === 0) {
           const { data: vd } = await supabase.from('ecom_product_variants').select('*').eq('product_id', source.id).order('position');
@@ -80,6 +84,7 @@ const ProductDetail: React.FC = () => {
   };
   const inStock = getInStock();
   const currentPrice = getMarketAdjustedPrice(selectedVariant?.price || product.price, product.product_type);
+  const productDescription = (product.description || '').trim() || `${product.name} brings together dependable quality, modern style, and everyday practicality.`;
 
   const handleSize = (size: string) => {
     setSelectedSize(size);
@@ -124,7 +129,7 @@ const ProductDetail: React.FC = () => {
               <span className="text-sm text-gray-500">(128 reviews)</span>
             </div>
             <p className="text-3xl font-bold mb-5">{formatPrice(currentPrice)}</p>
-            <p className="text-gray-600 mb-6">{product.description}</p>
+            <p className="text-gray-600 mb-6">{productDescription}</p>
 
             {hasVariants && (
               <div className="mb-6">

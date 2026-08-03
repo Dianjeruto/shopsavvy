@@ -47,7 +47,7 @@ const Checkout: React.FC = () => {
   const [paymentError, setPaymentError] = useState('');
   const [shipping] = useState(0);
   const [tax, setTax] = useState(0);
-  const [addr, setAddr] = useState({ name: '', email: '', phone: '', address: '', city: '', state: '', zip: '', country: 'Kenya' });
+  const [addr, setAddr] = useState({ name: '', email: '', phone: '', address: '', city: '', location: '', zip: '', country: 'Kenya' });
 
   useEffect(() => {
     if (!cart.length) return;
@@ -58,11 +58,11 @@ const Checkout: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (addr.state.length === 2 && cartSubtotal > 0) {
-      supabase.functions.invoke('calculate-tax', { body: { state: addr.state, subtotal: cartSubtotal } })
+    if (addr.location.length > 0 && cartSubtotal > 0) {
+      supabase.functions.invoke('calculate-tax', { body: { state: addr.location, subtotal: cartSubtotal } })
         .then(({ data }) => { if (data?.success) setTax(data.taxCents); });
     }
-  }, [addr.state, cartSubtotal]);
+  }, [addr.location, cartSubtotal]);
 
   const total = cartSubtotal + shipping + tax;
 
@@ -124,7 +124,7 @@ const Checkout: React.FC = () => {
     navigate('/order-confirmation', { state: { orderId: order?.id, total } });
   };
 
-  const formOk = addr.name && addr.email && addr.phone && addr.address && addr.city && addr.state && addr.zip && addr.country === 'Kenya';
+  const formOk = addr.name && addr.email && addr.phone && addr.address && addr.city && addr.location && addr.country === 'Kenya';
 
   if (!cart.length) {
     return (
@@ -147,20 +147,20 @@ const Checkout: React.FC = () => {
           <h1 className="text-2xl font-bold mb-6">Checkout</h1>
           <h2 className="font-semibold mb-3">Shipping Address</h2>
           <div className="grid grid-cols-2 gap-3 mb-6">
-            <input placeholder="Full Name" className="col-span-2 border border-gray-200 p-3 rounded-lg" value={addr.name} onChange={e => setAddr({ ...addr, name: e.target.value })} />
-            <input placeholder="Email" className="col-span-2 border border-gray-200 p-3 rounded-lg" value={addr.email} onChange={e => setAddr({ ...addr, email: e.target.value })} />
-            <input placeholder="Phone Number (+254 ... )" className="col-span-2 border border-gray-200 p-3 rounded-lg" value={addr.phone} onChange={e => setAddr({ ...addr, phone: e.target.value })} />
-            <input placeholder="Address" className="col-span-2 border border-gray-200 p-3 rounded-lg" value={addr.address} onChange={e => setAddr({ ...addr, address: e.target.value })} />
-            <input placeholder="City" className="border border-gray-200 p-3 rounded-lg" value={addr.city} onChange={e => setAddr({ ...addr, city: e.target.value })} />
-            <input placeholder="County / State" className="border border-gray-200 p-3 rounded-lg uppercase" value={addr.state} onChange={e => setAddr({ ...addr, state: e.target.value.toUpperCase() })} />
+            <input required placeholder="Full Name" className="col-span-2 border border-gray-200 p-3 rounded-lg" value={addr.name} onChange={e => setAddr({ ...addr, name: e.target.value })} />
+            <input required type="email" placeholder="Email" className="col-span-2 border border-gray-200 p-3 rounded-lg" value={addr.email} onChange={e => setAddr({ ...addr, email: e.target.value })} />
+            <input required placeholder="Contact (+254 ... )" className="col-span-2 border border-gray-200 p-3 rounded-lg" value={addr.phone} onChange={e => setAddr({ ...addr, phone: e.target.value })} />
+            <input required placeholder="Address" className="col-span-2 border border-gray-200 p-3 rounded-lg" value={addr.address} onChange={e => setAddr({ ...addr, address: e.target.value })} />
+            <input required placeholder="City" className="border border-gray-200 p-3 rounded-lg" value={addr.city} onChange={e => setAddr({ ...addr, city: e.target.value })} />
+            <input required placeholder="Location" className="border border-gray-200 p-3 rounded-lg uppercase" value={addr.location} onChange={e => setAddr({ ...addr, location: e.target.value.toUpperCase() })} />
             <input placeholder="Postal Code" className="border border-gray-200 p-3 rounded-lg" value={addr.zip} onChange={e => setAddr({ ...addr, zip: e.target.value })} />
-            <input placeholder="Country" readOnly className="border border-gray-200 p-3 rounded-lg bg-gray-50" value={addr.country} onChange={e => setAddr({ ...addr, country: e.target.value })} />
+            <input required placeholder="Country" readOnly className="border border-gray-200 p-3 rounded-lg bg-gray-50" value={addr.country} onChange={e => setAddr({ ...addr, country: e.target.value })} />
           </div>
 
           <h2 className="font-semibold mb-3">Payment</h2>
           <div className="grid gap-3 mb-4">
             <label className="flex items-center gap-3 border border-gray-200 rounded-lg p-3 cursor-pointer">
-              <input type="radio" name="paymentMethod" checked={paymentMethod === 'cod'} onChange={() => {
+              <input required type="radio" name="paymentMethod" checked={paymentMethod === 'cod'} onChange={() => {
                 setPaymentMethod('cod');
                 setClientSecret('');
               }} />
@@ -170,7 +170,7 @@ const Checkout: React.FC = () => {
               </span>
             </label>
             <label className="flex items-center gap-3 border border-gray-200 rounded-lg p-3 cursor-pointer">
-              <input type="radio" name="paymentMethod" checked={paymentMethod === 'prepay'} onChange={() => {
+              <input required type="radio" name="paymentMethod" checked={paymentMethod === 'prepay'} onChange={() => {
                 setPaymentMethod('prepay');
                 setClientSecret('');
               }} />

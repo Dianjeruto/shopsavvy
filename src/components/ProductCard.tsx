@@ -2,12 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, Star } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
-import { formatPrice } from '@/lib/format';
+import { formatPrice, getMarketAdjustedPrice } from '@/lib/format';
 
 const ProductCard: React.FC<{ product: any }> = ({ product }) => {
   const { addToCart, toggleWishlist, isWishlisted } = useCart();
   const hasVariants = product.has_variants;
-  const price = hasVariants && product.variants?.length ? product.variants[0].price : product.price;
+  const basePrice = hasVariants && product.variants?.length ? product.variants[0].price : product.price;
+  const price = getMarketAdjustedPrice(basePrice, product.product_type);
   const onSale = (product.tags || []).includes('sale');
   const rating = 4 + ((product.name.length % 10) / 10);
 

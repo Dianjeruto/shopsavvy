@@ -7,7 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import { useCart } from '@/contexts/CartContext';
-import { formatPrice } from '@/lib/format';
+import { formatPrice, getMarketAdjustedPrice } from '@/lib/format';
 
 const ProductDetail: React.FC = () => {
   const { handle } = useParams<{ handle: string }>();
@@ -79,7 +79,7 @@ const ProductDetail: React.FC = () => {
     return product.inventory_qty > 0;
   };
   const inStock = getInStock();
-  const currentPrice = selectedVariant?.price || product.price;
+  const currentPrice = getMarketAdjustedPrice(selectedVariant?.price || product.price, product.product_type);
 
   const handleSize = (size: string) => {
     setSelectedSize(size);

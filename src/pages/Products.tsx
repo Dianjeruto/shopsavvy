@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { demoProducts } from '@/lib/demo-catalog';
+import { getMarketAdjustedPrice } from '@/lib/format';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
@@ -40,13 +41,13 @@ const Products: React.FC = () => {
 
   const filtered = useMemo(() => {
     let list = products.filter(p => {
-      const price = (p.has_variants && p.variants?.length ? p.variants[0].price : p.price) / 100;
+      const price = getMarketAdjustedPrice((p.has_variants && p.variants?.length ? p.variants[0].price : p.price), p.product_type) / 100;
       if (type !== 'All' && p.product_type !== type) return false;
       if (price < minPrice || price > maxPrice) return false;
       if (q && !p.name.toLowerCase().includes(q.toLowerCase()) && !(p.product_type || '').toLowerCase().includes(q.toLowerCase())) return false;
       return true;
     });
-    const getP = (p: any) => p.has_variants && p.variants?.length ? p.variants[0].price : p.price;
+    const getP = (p: any) => getMarketAdjustedPrice((p.has_variants && p.variants?.length ? p.variants[0].price : p.price), p.product_type);
     if (sort === 'price-asc') list = [...list].sort((a, b) => getP(a) - getP(b));
     if (sort === 'price-desc') list = [...list].sort((a, b) => getP(b) - getP(a));
     if (sort === 'name') list = [...list].sort((a, b) => a.name.localeCompare(b.name));
